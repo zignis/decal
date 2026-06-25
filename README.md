@@ -41,9 +41,9 @@ fn main() {
 }
 ```
 
-Explore [examples](https://github.com/mem-red/decal/tree/main/examples).
+Explore [examples](https://github.com/zignis/decal/tree/main/examples).
 
 ## License
 
-[MIT](https://github.com/mem-red/decal/blob/main/LICENSE-MIT)
-or [Apache-2.0](https://github.com/mem-red/decal/blob/main/LICENSE-APACHE)
+[MIT](https://github.com/zignis/decal/blob/main/LICENSE-MIT)
+or [Apache-2.0](https://github.com/zignis/decal/blob/main/LICENSE-APACHE)

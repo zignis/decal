@@ -7,7 +7,7 @@
 //! (SVG, native) or raster (PNG using [`resvg`]) output while preserving
 //! layout semantics and visual fidelity.
 //!
-//! Checkout the project repository for more details: https://github.com/mem-red/decal
+//! Checkout the project repository for more details: https://github.com/zignis/decal
 
 #[forbid(unsafe_code)]
 #[warn(missing_docs)]

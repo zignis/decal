@@ -1,11 +1,11 @@
 [package]
 name = "decal"
 description = "Declarative DSL for describing scenes and rendering them to SVG or PNG"
-version = "0.6.0"
+version = "0.6.1"
 edition = "2021"
 license.workspace = true
 rust-version = "1.87.0"
-repository = "https://github.com/mem-red/decal"
+repository = "https://github.com/zignis/decal"
 keywords = ["svg", "graphics", "rendering", "image", "vector"]
 categories = ["graphics", "rendering", "multimedia::images"]
 exclude = ["/examples"]
