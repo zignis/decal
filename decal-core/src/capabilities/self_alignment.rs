@@ -6,9 +6,9 @@ use crate::primitives::{
     IntoOptionalLength,
 };
 #[cfg(feature = "grid")]
-use taffy::style::GridPlacement;
-#[cfg(feature = "grid")]
 use taffy::Line;
+#[cfg(feature = "grid")]
+use taffy::style::GridPlacement;
 
 /// Capability for configuring self-alignment and flex item properties on a
 /// node.

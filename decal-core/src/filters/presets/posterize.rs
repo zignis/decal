@@ -1,6 +1,6 @@
 use crate::filters::{
-    primitives::TransferFunction,
     Filter,
+    primitives::TransferFunction,
 };
 
 const MIN_LEVELS: u8 = 2;

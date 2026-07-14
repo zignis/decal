@@ -1,21 +1,21 @@
 use crate::{
     builders::TextSpan,
     layout::{
+        BASE_FONT_SIZE,
+        BASE_LINE_HEIGHT,
+        DEFAULT_FONT_FAMILY,
         FontRegistry,
         RenderContext,
         Stencil,
         StencilScope,
         StencilType,
         Typography,
-        BASE_FONT_SIZE,
-        BASE_LINE_HEIGHT,
-        DEFAULT_FONT_FAMILY,
     },
     paint::{
-        write_fill_path,
         Iri,
         ResourceIri,
         ScaledRadii,
+        write_fill_path,
     },
     primitives::{
         Color,
@@ -25,14 +25,14 @@ use crate::{
         PaintStack,
     },
     utils::{
-        encode_image,
         ElementWriter,
         PathWriter,
+        encode_image,
     },
 };
 use base64::{
-    engine::general_purpose::STANDARD as BASE64,
     Engine,
+    engine::general_purpose::STANDARD as BASE64,
 };
 use cosmic_text::{
     Attrs,

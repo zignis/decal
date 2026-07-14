@@ -28,6 +28,12 @@ use std::{
 #[cfg(feature = "grid")]
 use taffy::compute_grid_layout;
 use taffy::{
+    CacheTree,
+    LayoutPartialTree,
+    PrintTree,
+    RoundTree,
+    TraversePartialTree,
+    TraverseTree,
     compute_block_layout,
     compute_cached_layout,
     compute_flexbox_layout,
@@ -36,12 +42,6 @@ use taffy::{
     prelude::TaffyMaxContent,
     print_tree,
     round_layout,
-    CacheTree,
-    LayoutPartialTree,
-    PrintTree,
-    RoundTree,
-    TraversePartialTree,
-    TraverseTree,
 };
 use thiserror::Error;
 use tiny_skia::Pixmap;

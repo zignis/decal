@@ -1,20 +1,20 @@
 use crate::{
     layout::{
-        text::TextMeta,
         ImageMeta,
         RenderContext,
         TextVectorizeError,
         Typography,
+        text::TextMeta,
     },
     paint::{
-        compute_scaled_radii,
-        write_border_path,
-        write_clip_path,
-        write_fill_path,
         Appearance,
         Resource,
         ResourceIri,
         ScaledRadii,
+        compute_scaled_radii,
+        write_border_path,
+        write_clip_path,
+        write_fill_path,
     },
     primitives::{
         ClipPath,

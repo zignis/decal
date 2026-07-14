@@ -1,6 +1,6 @@
 use crate::filters::{
-    primitives::TransferFunction,
     Filter,
+    primitives::TransferFunction,
 };
 
 impl Filter {

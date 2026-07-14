@@ -578,8 +578,7 @@ impl IntoResources for PaintStack {
 mod tests {
     use super::*;
     use crate::{
-        layout::Scene
-        ,
+        layout::Scene,
         test_utils::assert_xml,
     };
     use std::fmt::Write;
