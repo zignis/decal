@@ -1,8 +1,8 @@
 [package]
 name = "decal"
 description = "Declarative DSL for describing scenes and rendering them to SVG or PNG"
-version = "0.6.1"
-edition = "2021"
+version = "0.6.2"
+edition = "2024"
 license.workspace = true
 rust-version = "1.87.0"
 repository = "https://github.com/zignis/decal"

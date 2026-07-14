@@ -1,8 +1,8 @@
 [package]
 name = "decal-macros"
 description = "Macros for constructing Decal nodes"
-version = "0.6.1"
-edition = "2021"
+version = "0.6.2"
+edition = "2024"
 license.workspace = true
 rust-version = "1.87.0"
 repository = "https://github.com/zignis/decal"
