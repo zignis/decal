@@ -1,7 +1,7 @@
 [package]
 name = "decal"
 description = "Declarative DSL for describing scenes and rendering them to SVG or PNG"
-version = "0.6.2"
+version = "0.6.3"
 edition = "2024"
 license.workspace = true
 rust-version = "1.87.0"
