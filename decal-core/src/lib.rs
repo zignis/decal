@@ -17,7 +17,7 @@
 //! 3. Render the scene to SVG (`vectorize`) or rasterize it to a bitmap
 //!    (`rasterize`).
 //!
-//! ```rust
+//! ```rust,no_run
 //! use decal::prelude::*;
 //! use std::fs;
 //!
