@@ -12,8 +12,8 @@ use std::fmt::{
 };
 use taffy::Size;
 
-#[derive(Debug, Clone, EnumDisplay)]
-enum ImageSourceInner {
+#[derive(Debug, Hash, Eq, PartialEq, Clone, EnumDisplay)]
+pub(crate) enum ImageSourceInner {
     /// External image reference.
     #[display("{0}")]
     Href(String),
@@ -23,7 +23,7 @@ enum ImageSourceInner {
 }
 
 /// The source of an image node.
-#[derive(Debug, Clone)]
+#[derive(Debug, Hash, Eq, PartialEq, Clone)]
 pub struct ImageSource(ImageSourceInner);
 
 impl Display for ImageSource {
@@ -150,8 +150,16 @@ impl ImageSource {
     }
 
     /// Returns the underlying image source representation.
-    fn inner(&self) -> &ImageSourceInner {
+    pub(crate) fn inner(&self) -> &ImageSourceInner {
         &self.0
+    }
+
+    /// Returns the href if this is an external image reference.
+    pub fn as_href(&self) -> Option<&str> {
+        match &self.0 {
+            ImageSourceInner::Href(href) if !href.is_empty() => Some(href.as_str()),
+            _ => None,
+        }
     }
 }
 

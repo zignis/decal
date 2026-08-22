@@ -18,7 +18,6 @@ use crate::{
         Path,
         Pattern,
         PatternContentUnits,
-        PatternUnits,
         RadialGradient,
     },
     utils::{
@@ -39,7 +38,7 @@ pub(crate) enum PaintInner {
     #[default]
     None,
     Color(Color),
-    Image(Pattern),
+    Image(ImagePaint),
     LinearGradient(LinearGradient),
     RadialGradient(RadialGradient),
     Pattern(Pattern),
@@ -77,10 +76,7 @@ impl Paint {
     /// # Returns
     /// - [`Self`]
     pub fn image(image: ImagePaint) -> Self {
-        image
-            .into_pattern()
-            .map(|x| Self(PaintInner::Image(x)))
-            .unwrap_or(Self::none())
+        Self(PaintInner::Image(image))
     }
 
     /// Creates a [`Paint`] value from a [`LinearGradient`].
@@ -130,15 +126,14 @@ impl Display for Paint {
             PaintInner::Color(color) => color.fmt(f),
             PaintInner::LinearGradient(gradient) => write!(f, "url(#{})", gradient.iri()),
             PaintInner::RadialGradient(gradient) => write!(f, "url(#{})", gradient.iri()),
-            PaintInner::Image(pattern) | PaintInner::Pattern(pattern) => {
-                write!(f, "url(#{})", pattern.iri())
-            }
+            PaintInner::Pattern(pattern) => write!(f, "url(#{})", pattern.iri()),
+            PaintInner::Image(image) => write!(f, "url(#{})", image.iri()),
         }
     }
 }
 
 /// The image-based paint configuration.
-#[derive(Debug, Clone, SmartDefault)]
+#[derive(Debug, Hash, Eq, PartialEq, Clone, SmartDefault)]
 pub struct ImagePaint {
     source: ImageSource,
     #[default(nf32!(0.5))]
@@ -323,28 +318,38 @@ impl ImagePaint {
         self
     }
 
-    /// Converts the image configuration into a [`Pattern`] element.
-    fn into_pattern(self) -> Option<Pattern> {
-        Pattern::build(|out| {
-            ElementWriter::new(out, "image")?
-                .attr("href", (self.source,))?
-                .attr("preserveAspectRatio", "none")?
-                .attrs([
-                    ("x", (1.0 - self.width.get()) * self.x.get()),
-                    ("y", (1.0 - self.height.get()) * self.y.get()),
-                    ("width", self.width.get()),
-                    ("height", self.height.get()),
-                ])?
-                .attr("crossorigin", self.cross_origin.map(|x| (x,)))?
-                .close()
-        })
-        .map(|pat| {
-            pat.pattern_units(PatternUnits::ObjectBoundingBox)
-                .pattern_content_units(PatternContentUnits::ObjectBoundingBox)
-                .width(Length::units(1.0))
-                .height(Length::units(1.0))
-        })
-        .ok()
+    /// Returns the href of the inner source if its an image.
+    pub(crate) fn as_href(&self) -> Option<&str> {
+        self.source.as_href()
+    }
+}
+
+impl ResourceIri for ImagePaint {}
+
+impl Display for ImagePaint {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        ElementWriter::new(f, "pattern")?
+            .attr("id", (self.iri(),))?
+            .attr(
+                "patternContentUnits",
+                (PatternContentUnits::ObjectBoundingBox,),
+            )?
+            .attr("width", Length::<false, true>::units(1.0))?
+            .attr("height", Length::<false, true>::units(1.0))?
+            .content(|out| {
+                ElementWriter::new(out, "image")?
+                    .attr("href", (&self.source,))?
+                    .attr("preserveAspectRatio", "none")?
+                    .attrs([
+                        ("x", (1.0 - self.width.get()) * self.x.get()),
+                        ("y", (1.0 - self.height.get()) * self.y.get()),
+                        ("width", self.width.get()),
+                        ("height", self.height.get()),
+                    ])?
+                    .attr("crossorigin", self.cross_origin.map(|x| (x,)))?
+                    .close()
+            })?
+            .close()
     }
 }
 
@@ -485,7 +490,7 @@ impl PaintStack {
     /// - `visit_layer`: The visitor invoked for each rendered paint layer.
     /// - `visit_group`: The visitor invoked for the enclosing group when
     ///   multiple layers are present.
-    pub(crate) fn render<'a, W, D, S, L, G>(
+    pub(crate) fn render<W, D, S, L, G>(
         &self,
         ctx: &mut RenderContext<W>,
         draw_single_layer: D,
@@ -568,8 +573,7 @@ impl IntoResources for PaintStack {
     fn into_resources(self) -> Vec<Resource> {
         self.0
             .into_iter()
-            .map(|x| x.paint.into_resources())
-            .flatten()
+            .flat_map(|x| x.paint.into_resources())
             .collect()
     }
 }
@@ -620,22 +624,21 @@ mod tests {
     #[test]
     fn renders_image_paint() {
         let img = ImagePaint::new("test");
-        let pattern = img.clone().into_pattern().unwrap();
 
         assert_eq!(
-            Paint::image(img).to_string(),
-            format!(r#"url(#{})"#, pattern.iri())
+            Paint::image(img.clone()).to_string(),
+            format!(r#"url(#{})"#, img.iri())
         );
 
         assert_xml(
-            pattern.to_string(),
+            img.to_string(),
             format!(
                 r#"
-<pattern id="{}" width="1" height="1" patternContentUnits="objectBoundingBox">
+<pattern id="{}" patternContentUnits="objectBoundingBox" width="1" height="1">
     <image href="test" preserveAspectRatio="none" x="0" y="0" width="1" height="1" />
 </pattern>
 "#,
-                pattern.iri()
+                img.iri()
             ),
         );
     }
@@ -731,7 +734,7 @@ mod tests {
             )
             .unwrap();
 
-        let path_iri = match scene.resources.lock().inner().get(0).unwrap() {
+        let path_iri = match scene.resources.lock().inner().first().unwrap() {
             Resource::Path(path) => path.iri(),
             _ => panic!("path not found"),
         };
@@ -768,7 +771,7 @@ mod tests {
             )
             .unwrap();
 
-        let path_iri = match scene.resources.lock().inner().get(0).unwrap() {
+        let path_iri = match scene.resources.lock().inner().first().unwrap() {
             Resource::Path(path) => path.iri(),
             _ => panic!("path not found"),
         };
@@ -805,7 +808,7 @@ mod tests {
             )
             .unwrap();
 
-        let path_iri = match scene.resources.lock().inner().get(0).unwrap() {
+        let path_iri = match scene.resources.lock().inner().first().unwrap() {
             Resource::Path(path) => path.iri(),
             _ => panic!("path not found"),
         };

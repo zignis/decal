@@ -250,7 +250,7 @@ where
     fn write(&self, key: &str, out: &mut W) -> std::fmt::Result;
 }
 
-impl<'a, W, D> IntoAttrValue<W> for (D,)
+impl<W, D> IntoAttrValue<W> for (D,)
 where
     W: Write,
     D: Display,
@@ -269,7 +269,7 @@ where
     }
 }
 
-impl<'a, W> IntoAttrValue<W> for String
+impl<W> IntoAttrValue<W> for String
 where
     W: Write,
 {
@@ -278,7 +278,7 @@ where
     }
 }
 
-impl<'a, W> IntoAttrValue<W> for f32
+impl<W> IntoAttrValue<W> for f32
 where
     W: Write,
 {
@@ -289,7 +289,7 @@ where
     }
 }
 
-impl<'a, W, const AUTO: bool, const PERCENT: bool> IntoAttrValue<W> for Length<AUTO, PERCENT>
+impl<W, const AUTO: bool, const PERCENT: bool> IntoAttrValue<W> for Length<AUTO, PERCENT>
 where
     W: Write,
 {
@@ -298,7 +298,7 @@ where
     }
 }
 
-impl<'a, W> IntoAttrValue<W> for FiniteF32
+impl<W> IntoAttrValue<W> for FiniteF32
 where
     W: Write,
 {
@@ -307,7 +307,7 @@ where
     }
 }
 
-impl<'a, W> IntoAttrValue<W> for NormalizedF32
+impl<W> IntoAttrValue<W> for NormalizedF32
 where
     W: Write,
 {
@@ -316,7 +316,7 @@ where
     }
 }
 
-impl<'a, W> IntoAttrValue<W> for PositiveF32
+impl<W> IntoAttrValue<W> for PositiveF32
 where
     W: Write,
 {
@@ -325,7 +325,7 @@ where
     }
 }
 
-impl<'a, W> IntoAttrValue<W> for PositiveF32Pair
+impl<W> IntoAttrValue<W> for PositiveF32Pair
 where
     W: Write,
 {
@@ -334,7 +334,7 @@ where
     }
 }
 
-impl<'a, W, V> IntoAttrValue<W> for Option<V>
+impl<W, V> IntoAttrValue<W> for Option<V>
 where
     W: Write,
     V: IntoAttrValue<W>,

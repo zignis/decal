@@ -42,6 +42,7 @@ impl Resources {
         self.resources.is_empty()
     }
 
+    #[cfg(test)]
     pub(crate) fn inner(&self) -> &[Resource] {
         &self.resources
     }

@@ -1,5 +1,8 @@
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
+use crate::layout::fetch::fetch_image_sync;
 use crate::{
     layout::{
+        CachedImage,
         FontRegistry,
         ImageCache,
         ImageOptions,
@@ -18,6 +21,7 @@ use crate::{
     primitives::Size,
     utils::ElementWriter,
 };
+use hashbrown::HashSet;
 use parking_lot::Mutex;
 use resvg::render;
 use smallvec::SmallVec;
@@ -73,6 +77,7 @@ pub enum RasterizeError {
 pub struct Scene {
     pub(crate) fonts: Arc<Mutex<FontRegistry>>,
     pub(crate) resources: Mutex<Resources>,
+    pub(crate) image_refs: HashSet<String>,
     nodes: Vec<Node>,
 }
 
@@ -86,16 +91,24 @@ impl Scene {
     /// - [`Self`]
     pub fn new(root: Node) -> Self {
         let mut resources = Resources::default();
+        let mut image_refs = HashSet::new();
 
-        // register resources
+        if let NodeKind::Image(ref meta) = root.kind
+            && let Some(href) = meta.source.as_href()
+        {
+            image_refs.insert(href.to_string());
+        }
+
         for resource in &root.resources {
             resources.get_or_add_resource(resource.clone());
+            image_refs.extend(resource.image_refs());
         }
 
         Self {
             fonts: Arc::new(Mutex::new(FontRegistry::new())),
             resources: Mutex::new(resources),
             nodes: vec![root],
+            image_refs,
         }
     }
 
@@ -104,7 +117,8 @@ impl Scene {
         Self {
             fonts: Arc::new(Mutex::new(FontRegistry::new())),
             resources: Mutex::new(Resources::default()),
-            nodes: vec![],
+            nodes: Vec::new(),
+            image_refs: HashSet::new(),
         }
     }
 
@@ -145,11 +159,18 @@ impl Scene {
             meta.typography(child.typography.clone());
         }
 
-        // register resources
+        // collect image href
+        if let NodeKind::Image(ref meta) = child.kind
+            && let Some(href) = meta.source.as_href()
+        {
+            self.image_refs.insert(href.to_string());
+        }
+
         {
             let mut resources = self.resources.lock();
             for resource in &child.resources {
                 resources.get_or_add_resource(resource.clone());
+                self.image_refs.extend(resource.image_refs());
             }
         }
 
@@ -198,12 +219,19 @@ impl Scene {
 
             self.nodes.push(node);
         }
+
+        self.image_refs.extend(scene.image_refs);
     }
 
     /// Prints the scene graph in a tree format.
     #[allow(dead_code)]
     pub(crate) fn print_tree(&self) {
         print_tree(self, taffy::NodeId::from(ROOT_ID));
+    }
+
+    /// Returns the list of external image URLs present in this scene.
+    pub(crate) fn image_refs(&self) -> &HashSet<String> {
+        &self.image_refs
     }
 
     /// Streams the vectorized SVG representation into the given output writer.
@@ -438,24 +466,6 @@ impl Scene {
     }
 }
 
-/// Converts raw image bytes into [`ImageKind`].
-///
-/// # Arguments
-/// - `data`: The raw image data.
-///
-/// # Returns
-/// - `Some(ImageKind)` on success.
-/// - `None` when kind of image cannot be inferred.
-fn to_image_kind(data: Arc<Vec<u8>>) -> Option<ImageKind> {
-    match infer::get(&data)?.mime_type() {
-        "image/png" => Some(ImageKind::PNG(data)),
-        "image/jpeg" => Some(ImageKind::JPEG(data)),
-        "image/webp" => Some(ImageKind::WEBP(data)),
-        "image/gif" => Some(ImageKind::GIF(data)),
-        _ => None,
-    }
-}
-
 /// Resolves and caches external images referenced by `href`.
 ///
 /// # Arguments
@@ -475,39 +485,37 @@ fn fetch_image_cached(
     opts: &ImageOptions,
     usvg_opts: &usvg::Options,
 ) -> Option<ImageKind> {
-    let skip_cache = opts.disable_caching
-        || opts.cache_ignore_list.iter().any(|item| item == href)
-        || opts
-            .cache_ignore_fn
-            .as_ref()
-            .is_some_and(|ignore_fn| ignore_fn(href));
-
-    if !skip_cache {
-        if let Some(image) = image_cache.lock().get(href) {
-            return Some(image.clone());
-        }
+    if let Some(image) = image_cache.lock().get(href) {
+        return image.clone().into_image_kind(usvg_opts);
     }
 
     let image = if let Some(resolve) = &opts.href_string_resolver {
-        resolve(href, usvg_opts)
+        resolve(href, usvg_opts).map(|img| CachedImage::Resolved(Box::new(img)))
     } else {
-        let mut res = ureq::get(href).call().ok()?;
-
-        if !res.status().is_success() {
-            return None;
+        // blocking fetch
+        #[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
+        {
+            fetch_image_sync(href)
         }
 
-        let buf = res.body_mut().read_to_vec().ok()?;
-        to_image_kind(Arc::new(buf))
+        // this will only be called when the `fetch` feature is disabled and the user
+        // hasn't provided a href resolver; image will already be resolved and preloaded
+        // into the cache when using the `fetch-async` feature or targeting WASM
+        #[cfg(any(target_arch = "wasm32", not(feature = "fetch")))]
+        {
+            log::warn!(
+                "failed to get image `{href}`: `fetch` feature is disabled and image resolver is not provided",
+            );
+
+            None
+        }
     };
 
-    if !skip_cache {
-        if let Some(kind) = image.clone() {
-            image_cache.lock().push(href.to_string(), kind);
-        }
+    if let Some(kind) = image.clone() {
+        image_cache.lock().push(href.to_string(), kind);
     }
 
-    image
+    image.and_then(|img| img.into_image_kind(usvg_opts))
 }
 
 /// Cascades typography values through a subtree rooted at the first node.

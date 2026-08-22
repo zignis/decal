@@ -37,6 +37,14 @@ impl Image {
             region: Default::default(),
         }
     }
+
+    /// Returns the href of the image.
+    ///
+    /// # Returns
+    /// - href of inner image
+    pub(crate) fn href(&self) -> &str {
+        &self.href
+    }
 }
 
 impl HasFilterRegion for Image {

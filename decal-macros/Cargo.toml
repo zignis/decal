@@ -1,10 +1,10 @@
 [package]
 name = "decal-macros"
 description = "Macros for constructing Decal nodes"
-version = "0.6.3"
+version = "0.7.0"
 edition = "2024"
 license.workspace = true
-rust-version = "1.87.0"
+rust-version = "1.90.0"
 repository = "https://github.com/zignis/decal"
 keywords = ["svg", "macros"]
 categories = ["development-tools::procedural-macro-helpers"]
