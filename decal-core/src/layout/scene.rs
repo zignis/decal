@@ -1,4 +1,4 @@
-#[cfg(all(not(target_arch = "wasm32"), feature = "network"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
 use crate::layout::fetch::fetch_image_sync;
 use crate::{
     layout::{
@@ -493,18 +493,18 @@ fn fetch_image_cached(
         resolve(href, usvg_opts).map(|img| CachedImage::Resolved(Box::new(img)))
     } else {
         // blocking fetch
-        #[cfg(all(not(target_arch = "wasm32"), feature = "network"))]
+        #[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
         {
             fetch_image_sync(href)
         }
 
-        // this will only be called when the `network` feature is disabled and the user
+        // this will only be called when the `fetch` feature is disabled and the user
         // hasn't provided a href resolver; image will already be resolved and preloaded
-        // into the cache when using the `network-async` feature or targeting WASM
-        #[cfg(any(target_arch = "wasm32", not(feature = "network")))]
+        // into the cache when using the `fetch-async` feature or targeting WASM
+        #[cfg(any(target_arch = "wasm32", not(feature = "fetch")))]
         {
             log::warn!(
-                "failed to get image `{href}`: `network` feature is disabled and image resolver is not provided",
+                "failed to get image `{href}`: `fetch` feature is disabled and image resolver is not provided",
             );
 
             None

@@ -1,6 +1,6 @@
-#[cfg(any(target_arch = "wasm32", feature = "network-async"))]
+#[cfg(any(target_arch = "wasm32", feature = "fetch-async"))]
 use crate::layout::fetch_image_async;
-#[cfg(all(not(target_arch = "wasm32"), feature = "network"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
 use crate::layout::fetch_image_sync;
 use crate::{
     layout::{
@@ -14,7 +14,7 @@ use crate::{
     },
     primitives::Size,
 };
-#[cfg(any(target_arch = "wasm32", feature = "network-async"))]
+#[cfg(any(target_arch = "wasm32", feature = "fetch-async"))]
 use futures::future::join_all;
 use lru::LruCache;
 use parking_lot::Mutex;
@@ -129,7 +129,7 @@ impl Engine {
         scene: &mut Scene,
         options: &RasterizeOptions,
     ) -> Result<(Pixmap, Size<f32>), RasterizeError> {
-        #[cfg(all(not(target_arch = "wasm32"), feature = "network"))]
+        #[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
         self.preload_images(scene, &options.image);
         let output = self.prepare(scene).rasterize(&self.image_cache, options);
         self.cleanup_cache(&options.image);
@@ -153,7 +153,7 @@ impl Engine {
     /// - [`RasterizeError`] on failure.
     ///
     /// [`rasterize`]: Engine::rasterize
-    #[cfg(any(target_arch = "wasm32", feature = "network-async"))]
+    #[cfg(any(target_arch = "wasm32", feature = "fetch-async"))]
     pub async fn rasterize_async(
         &mut self,
         scene: &mut Scene,
@@ -210,8 +210,8 @@ impl Engine {
     /// Preloads all external images refs in the scene into the cache
     /// synchronously.
     ///
-    /// Used on bare-metal with `network` feature.
-    #[cfg(all(not(target_arch = "wasm32"), feature = "network"))]
+    /// Used on bare-metal with `fetch` feature.
+    #[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
     fn preload_images(&self, scene: &Scene, opts: &ImageOptions) {
         let refs = scene.image_refs();
 
@@ -254,8 +254,8 @@ impl Engine {
     /// Preloads all external images refs in the scene into the cache
     /// asynchronously.
     ///
-    /// Used on WASM targets and on bare-metal with `network-async` feature.
-    #[cfg(any(target_arch = "wasm32", feature = "network-async"))]
+    /// Used on WASM targets and on bare-metal with `fetch-async` feature.
+    #[cfg(any(target_arch = "wasm32", feature = "fetch-async"))]
     async fn preload_images_async(&self, scene: &Scene, opts: &ImageOptions<'_>) {
         let refs = scene.image_refs();
 

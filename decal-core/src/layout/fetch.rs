@@ -4,10 +4,10 @@ use js_sys::{
     ArrayBuffer,
     Uint8Array,
 };
-#[cfg(all(not(target_arch = "wasm32"), feature = "network-async"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch-async"))]
 use reqwest::Client;
 use std::sync::Arc;
-#[cfg(all(not(target_arch = "wasm32"), feature = "network-async"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch-async"))]
 use std::sync::LazyLock;
 use usvg::ImageKind;
 #[cfg(target_arch = "wasm32")]
@@ -22,7 +22,7 @@ use web_sys::{
 };
 
 /// Reqwest client
-#[cfg(all(not(target_arch = "wasm32"), feature = "network-async"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch-async"))]
 static CLIENT: LazyLock<Client> = LazyLock::new(|| Client::new());
 
 /// Fetches an image from a URL asynchronously (for WASM).
@@ -51,7 +51,7 @@ pub(crate) async fn fetch_image_async(href: &str) -> Option<CachedImage> {
 }
 
 /// Fetches an image from a URL asynchronously (for bare-metal).
-#[cfg(all(not(target_arch = "wasm32"), feature = "network-async"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch-async"))]
 pub(crate) async fn fetch_image_async(href: &str) -> Option<CachedImage> {
     let res = CLIENT.get(href).send().await.ok()?;
 
@@ -64,7 +64,7 @@ pub(crate) async fn fetch_image_async(href: &str) -> Option<CachedImage> {
 }
 
 /// Fetches an image from a URL synchronously.
-#[cfg(all(not(target_arch = "wasm32"), feature = "network"))]
+#[cfg(all(not(target_arch = "wasm32"), feature = "fetch"))]
 pub(crate) fn fetch_image_sync(href: &str) -> Option<CachedImage> {
     let mut res = ureq::get(href).call().ok()?;
 
