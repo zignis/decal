@@ -18,11 +18,32 @@ use std::{
     sync::Arc,
 };
 use tiny_skia::Pixmap;
-use usvg::ImageKind;
+use usvg::{
+    ImageKind,
+    Tree,
+};
+
+/// Wrapper around the image data (to defer SVG parsing until rasterization).
+#[derive(Clone)]
+pub(crate) enum CachedImage {
+    Resolved(Box<ImageKind>),
+    DeferredSvg(Arc<Vec<u8>>),
+}
+
+impl CachedImage {
+    pub(crate) fn into_image_kind(self, usvg_opts: &usvg::Options) -> Option<ImageKind> {
+        match self {
+            CachedImage::Resolved(kind) => Some(*kind),
+            CachedImage::DeferredSvg(data) => {
+                Tree::from_data(&data, usvg_opts).ok().map(ImageKind::SVG)
+            }
+        }
+    }
+}
 
 /// Shared image cache type used to deduplicate decoded raster images across
 /// renders.
-pub(crate) type ImageCache = Arc<Mutex<LruCache<String, ImageKind>>>;
+pub(crate) type ImageCache = Arc<Mutex<LruCache<String, CachedImage>>>;
 
 /// Default capacity used for the image cache.
 const DEFAULT_IMAGE_CACHE_CAP: NonZeroUsize = NonZeroUsize::new(128).expect("128 is non-zero");
