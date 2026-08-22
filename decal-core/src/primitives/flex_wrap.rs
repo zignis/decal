@@ -9,10 +9,10 @@ pub enum FlexWrap {
     WrapReverse,
 }
 
-impl Into<taffy::FlexWrap> for FlexWrap {
+impl From<FlexWrap> for taffy::FlexWrap {
     #[inline]
-    fn into(self) -> taffy::FlexWrap {
-        match self {
+    fn from(wrap: FlexWrap) -> Self {
+        match wrap {
             FlexWrap::NoWrap => taffy::FlexWrap::NoWrap,
             FlexWrap::Wrap => taffy::FlexWrap::Wrap,
             FlexWrap::WrapReverse => taffy::FlexWrap::WrapReverse,

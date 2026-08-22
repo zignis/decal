@@ -13,9 +13,9 @@ pub enum Display {
     None,
 }
 
-impl Into<taffy::Display> for Display {
-    fn into(self) -> taffy::Display {
-        match self {
+impl From<Display> for taffy::Display {
+    fn from(display: Display) -> Self {
+        match display {
             Display::Block => taffy::Display::Block,
             Display::Flex => taffy::Display::Flex,
             #[cfg(feature = "grid")]

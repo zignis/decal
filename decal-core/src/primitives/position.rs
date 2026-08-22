@@ -9,10 +9,10 @@ pub enum Position {
     Absolute,
 }
 
-impl Into<taffy::Position> for Position {
+impl From<Position> for taffy::Position {
     #[inline]
-    fn into(self) -> taffy::Position {
-        match self {
+    fn from(pos: Position) -> Self {
+        match pos {
             Position::Relative => taffy::Position::Relative,
             Position::Absolute => taffy::Position::Absolute,
         }

@@ -59,28 +59,28 @@ impl<const AUTO: bool, const PERCENT: bool> Default for Rect<Length<AUTO, PERCEN
     }
 }
 
-impl<const PERCENT: bool> Into<taffy::Rect<taffy::LengthPercentage>>
-    for Rect<Length<false, PERCENT>>
+impl<const PERCENT: bool> From<Rect<Length<false, PERCENT>>>
+    for taffy::Rect<taffy::LengthPercentage>
 {
-    fn into(self) -> taffy::Rect<taffy::LengthPercentage> {
+    fn from(rect: Rect<Length<false, PERCENT>>) -> Self {
         taffy::Rect {
-            top: self.top.into(),
-            right: self.right.into(),
-            bottom: self.bottom.into(),
-            left: self.left.into(),
+            top: rect.top.into(),
+            right: rect.right.into(),
+            bottom: rect.bottom.into(),
+            left: rect.left.into(),
         }
     }
 }
 
-impl<const AUTO: bool, const PERCENT: bool> Into<taffy::Rect<taffy::LengthPercentageAuto>>
-    for Rect<Length<AUTO, PERCENT>>
+impl<const AUTO: bool, const PERCENT: bool> From<Rect<Length<AUTO, PERCENT>>>
+    for taffy::Rect<taffy::LengthPercentageAuto>
 {
-    fn into(self) -> taffy::Rect<taffy::LengthPercentageAuto> {
+    fn from(rect: Rect<Length<AUTO, PERCENT>>) -> Self {
         taffy::Rect {
-            top: self.top.into(),
-            right: self.right.into(),
-            bottom: self.bottom.into(),
-            left: self.left.into(),
+            top: rect.top.into(),
+            right: rect.right.into(),
+            bottom: rect.bottom.into(),
+            left: rect.left.into(),
         }
     }
 }

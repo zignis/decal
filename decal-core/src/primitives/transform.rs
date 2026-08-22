@@ -322,7 +322,7 @@ impl IntoFloatPair for f32 {
 
 impl IntoFloatPair for (f32, f32) {
     fn into_float_pair(self) -> (f32, f32) {
-        (self.0.into(), self.1.into())
+        (self.0, self.1)
     }
 }
 

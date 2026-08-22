@@ -12,9 +12,9 @@ pub enum FlexDirection {
     ColumnReverse,
 }
 
-impl Into<taffy::FlexDirection> for FlexDirection {
-    fn into(self) -> taffy::FlexDirection {
-        match self {
+impl From<FlexDirection> for taffy::FlexDirection {
+    fn from(direction: FlexDirection) -> Self {
+        match direction {
             FlexDirection::Row => taffy::FlexDirection::Row,
             FlexDirection::Column => taffy::FlexDirection::Column,
             FlexDirection::RowReverse => taffy::FlexDirection::RowReverse,

@@ -8,9 +8,9 @@ pub enum Overflow {
     Hidden,
 }
 
-impl Into<taffy::Overflow> for Overflow {
-    fn into(self) -> taffy::Overflow {
-        match self {
+impl From<Overflow> for taffy::Overflow {
+    fn from(overflow: Overflow) -> Self {
+        match overflow {
             Overflow::Visible => taffy::Overflow::Visible,
             Overflow::Hidden => taffy::Overflow::Hidden,
         }

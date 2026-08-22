@@ -95,10 +95,10 @@ pub type AlignSelf = AlignItems;
 /// Alias of [`AlignItems`].
 pub type JustifySelf = AlignItems;
 
-impl Into<taffy::AlignItems> for AlignItems {
+impl From<AlignItems> for taffy::AlignItems {
     #[inline]
-    fn into(self) -> taffy::AlignItems {
-        match self {
+    fn from(alignment: AlignItems) -> Self {
+        match alignment {
             AlignItems::Start => taffy::AlignItems::Start,
             AlignItems::End => taffy::AlignItems::End,
             AlignItems::FlexStart => taffy::AlignItems::FlexStart,
@@ -110,10 +110,10 @@ impl Into<taffy::AlignItems> for AlignItems {
     }
 }
 
-impl Into<taffy::AlignContent> for AlignContent {
+impl From<AlignContent> for taffy::AlignContent {
     #[inline]
-    fn into(self) -> taffy::AlignContent {
-        match self {
+    fn from(alignment: AlignContent) -> Self {
+        match alignment {
             AlignContent::Start => taffy::AlignContent::Start,
             AlignContent::End => taffy::AlignContent::End,
             AlignContent::FlexStart => taffy::AlignContent::FlexStart,

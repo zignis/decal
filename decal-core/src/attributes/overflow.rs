@@ -9,13 +9,13 @@ type OverflowXY = Point<Overflow>;
 
 /// Converts an internal overflow point into the corresponding Taffy overflow
 /// representation.
-impl Into<taffy::Point<taffy::Overflow>> for OverflowXY {
+impl From<OverflowXY> for taffy::Point<taffy::Overflow> {
     /// Maps each axis overflow value into its Taffy equivalent.
     #[inline]
-    fn into(self) -> taffy::Point<taffy::Overflow> {
+    fn from(point: OverflowXY) -> Self {
         taffy::Point {
-            x: self.x.into(),
-            y: self.y.into(),
+            x: point.x.into(),
+            y: point.y.into(),
         }
     }
 }
