@@ -51,23 +51,6 @@ impl Pattern {
         }
     }
 
-    /// Builds a [`Pattern`] by writing SVG content into a buffer.
-    ///
-    /// # Arguments
-    /// - `write_fn`: The closure used to write SVG content into the pattern.
-    ///
-    /// # Returns
-    /// - [`Self`] on success.
-    /// - [`std::fmt::Error`] if writing fails.
-    pub(crate) fn build<F>(write_fn: F) -> Result<Self, std::fmt::Error>
-    where
-        F: FnOnce(&mut String) -> std::fmt::Result,
-    {
-        let mut data = String::new();
-        write_fn(&mut data)?;
-        Ok(Pattern::new(data))
-    }
-
     /// Sets the coordinate system used to resolve pattern geometry.
     ///
     /// # Arguments
@@ -240,14 +223,10 @@ impl Display for Pattern {
 mod tests {
     use super::*;
     use crate::test_utils::assert_xml;
-    use std::fmt::Write;
-
     #[test]
     fn renders() {
-        for pattern in [
-            Pattern::new("content".into()),
-            Pattern::build(|out| out.write_str("content")).unwrap(),
-        ] {
+        {
+            let pattern = Pattern::new("content".into());
             assert_xml(
                 pattern.to_string(),
                 format!(r#"<pattern id="{}">content</pattern>"#, pattern.iri()),

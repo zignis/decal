@@ -25,6 +25,8 @@ pub(crate) enum Resource {
     #[display("{0}")]
     Pattern(Pattern),
     #[display("{0}")]
+    ImagePaint(ImagePaint),
+    #[display("{0}")]
     Filter(Filter),
     #[display("{0}")]
     ClipPath(ClipPath),
@@ -58,7 +60,8 @@ impl IntoResources for Paint {
             PaintInner::None | PaintInner::Color(_) => Vec::new(),
             PaintInner::LinearGradient(value) => value.into_resources(),
             PaintInner::RadialGradient(value) => value.into_resources(),
-            PaintInner::Image(value) | PaintInner::Pattern(value) => value.into_resources(),
+            PaintInner::Pattern(value) => value.into_resources(),
+            PaintInner::Image(value) => value.into_resources(),
         }
     }
 }
@@ -67,6 +70,13 @@ impl IntoResources for Pattern {
     #[inline]
     fn into_resources(self) -> Vec<Resource> {
         vec![Resource::Pattern(self)]
+    }
+}
+
+impl IntoResources for ImagePaint {
+    #[inline]
+    fn into_resources(self) -> Vec<Resource> {
+        vec![Resource::ImagePaint(self)]
     }
 }
 
@@ -101,6 +111,13 @@ impl From<Pattern> for Resource {
     #[inline]
     fn from(value: Pattern) -> Self {
         Self::Pattern(value)
+    }
+}
+
+impl From<ImagePaint> for Resource {
+    #[inline]
+    fn from(value: ImagePaint) -> Self {
+        Self::ImagePaint(value)
     }
 }
 
