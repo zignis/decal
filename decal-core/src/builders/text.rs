@@ -41,7 +41,7 @@ impl_node_builder!(
         meta.typography(this.typography.clone());
 
         Node::new(
-            NodeKind::Text(meta),
+            NodeKind::Text(Box::new(meta)),
             this.layout,
             this.visual,
             Some(this.typography),

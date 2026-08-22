@@ -51,7 +51,7 @@ pub(crate) enum NodeKind {
     #[cfg(feature = "grid")]
     Grid,
     #[display("Text: {0}")]
-    Text(TextMeta),
+    Text(Box<TextMeta>),
     #[display("Image: {0:?}")]
     Image(ImageMeta),
 }
@@ -103,7 +103,7 @@ impl Node {
             visual,
             children: Vec::new(),
             resources,
-            typography: typography.unwrap_or(Typography::default()),
+            typography: typography.unwrap_or_default(),
             cache: taffy::Cache::new(),
             unrounded_layout: taffy::Layout::with_order(0),
             final_layout: taffy::Layout::with_order(0),

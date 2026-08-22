@@ -259,7 +259,7 @@ impl Scene {
         self.emit_node(
             &mut RenderContext {
                 out,
-                scene: &self,
+                scene: self,
                 scene_size: size,
             },
             None,
