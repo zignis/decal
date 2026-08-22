@@ -13,7 +13,7 @@ where
     T: Write,
 {
     fn out_mut(&mut self) -> &mut T {
-        &mut self.0
+        self.0
     }
 }
 

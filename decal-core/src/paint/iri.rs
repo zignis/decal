@@ -10,7 +10,7 @@ use std::{
 };
 use twox_hash::XxHash3_64;
 
-const PREFIX: &'static str = "decal";
+const PREFIX: &str = "decal";
 
 /// Opaque identifier representing a stable, hashed resource IRI.
 #[derive(Debug, Hash, Eq, PartialEq, Copy, Clone)]

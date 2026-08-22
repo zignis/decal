@@ -46,7 +46,7 @@ where
     T: Write,
 {
     fn out_mut(&mut self) -> &mut T {
-        &mut self.out
+        self.out
     }
 }
 
@@ -260,7 +260,7 @@ where
     }
 }
 
-impl<'a, W> IntoAttrValue<W> for &'a str
+impl<W> IntoAttrValue<W> for &str
 where
     W: Write,
 {

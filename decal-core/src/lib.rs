@@ -11,9 +11,11 @@
 //!
 //! At a high level, the flow looks like this:
 //!
-//! 1. Build a scene using the `decal!` macro and primitives like `Row`, `Column`, `Text`, `Image`, etc.
+//! 1. Build a scene using the `decal!` macro and primitives like `Row`,
+//!    `Column`, `Text`, `Image`, etc.
 //! 2. Initialize an `Engine` with fonts and options.
-//! 3. Render the scene to SVG (`vectorize`) or rasterize it to a bitmap (`rasterize`).
+//! 3. Render the scene to SVG (`vectorize`) or rasterize it to a bitmap
+//!    (`rasterize`).
 //!
 //! ```rust
 //! use decal::prelude::*;
