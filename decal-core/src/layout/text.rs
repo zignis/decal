@@ -323,7 +323,7 @@ impl TextMeta {
 
                 if let Some(outline_commands) = cache
                     .get_outline_commands(font_system, cache_key)
-                    .filter(|x| is_drawable(*x))
+                    .filter(|x| is_drawable(x))
                 {
                     if skip_vector {
                         continue;
@@ -386,7 +386,7 @@ impl TextMeta {
                                 "href",
                                 (format_args!(
                                     "data:image/png;base64,{}",
-                                    BASE64.encode(encode_image(&image)?)
+                                    BASE64.encode(encode_image(image)?)
                                 ),),
                             )?
                             .attrs([
