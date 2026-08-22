@@ -10,16 +10,16 @@ use strict_num::FiniteF32;
 
 #[derive(Debug, Hash, Eq, PartialEq, Copy, Clone)]
 enum LightSourceInner {
-    DistantLight {
+    Distant {
         azimuth: FiniteF32,
         elevation: FiniteF32,
     },
-    PointLight {
+    Point {
         x: FiniteF32,
         y: FiniteF32,
         z: FiniteF32,
     },
-    SpotLight {
+    Spot {
         x: FiniteF32,
         y: FiniteF32,
         z: FiniteF32,
@@ -34,13 +34,13 @@ enum LightSourceInner {
 impl Display for LightSourceInner {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match *self {
-            Self::DistantLight { azimuth, elevation } => ElementWriter::new(f, "feDistantLight")?
+            Self::Distant { azimuth, elevation } => ElementWriter::new(f, "feDistantLight")?
                 .attrs([("azimuth", azimuth), ("elevation", elevation)])?
                 .close(),
-            Self::PointLight { x, y, z } => ElementWriter::new(f, "fePointLight")?
+            Self::Point { x, y, z } => ElementWriter::new(f, "fePointLight")?
                 .attrs([("x", x), ("y", y), ("z", z)])?
                 .close(),
-            Self::SpotLight {
+            Self::Spot {
                 x,
                 y,
                 z,
@@ -93,7 +93,7 @@ impl LightSource {
     ///
     /// https://drafts.csswg.org/filter-effects/#feDistantLightElement
     pub fn distant_light(azimuth: f32, elevation: f32) -> Self {
-        Self(LightSourceInner::DistantLight {
+        Self(LightSourceInner::Distant {
             azimuth: ff32!(azimuth),
             elevation: ff32!(elevation),
         })
@@ -113,7 +113,7 @@ impl LightSource {
     ///
     /// https://drafts.csswg.org/filter-effects/#fePointLightElement
     pub fn point_light(x: f32, y: f32, z: f32) -> Self {
-        Self(LightSourceInner::PointLight {
+        Self(LightSourceInner::Point {
             x: ff32!(x),
             y: ff32!(y),
             z: ff32!(z),
@@ -140,7 +140,7 @@ impl LightSource {
         specular_exponent: Option<f32>,
         limiting_cone_angle: Option<f32>,
     ) -> Self {
-        Self(LightSourceInner::SpotLight {
+        Self(LightSourceInner::Spot {
             x: ff32!(location.0),
             y: ff32!(location.1),
             z: ff32!(location.2),
