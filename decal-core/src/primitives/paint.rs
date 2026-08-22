@@ -318,11 +318,6 @@ impl ImagePaint {
         self
     }
 
-    /// Returns the underlying image source.
-    pub(crate) fn source(&self) -> &ImageSource {
-        &self.source
-    }
-
     /// Returns the href of the inner source if its an image.
     pub(crate) fn as_href(&self) -> Option<&str> {
         self.source.as_href()
