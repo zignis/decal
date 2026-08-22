@@ -93,10 +93,10 @@ impl Scene {
         let mut resources = Resources::default();
         let mut image_refs = HashSet::new();
 
-        if let NodeKind::Image(ref meta) = root.kind {
-            if let Some(href) = meta.source.as_href() {
-                image_refs.insert(href.to_string());
-            }
+        if let NodeKind::Image(ref meta) = root.kind
+            && let Some(href) = meta.source.as_href()
+        {
+            image_refs.insert(href.to_string());
         }
 
         for resource in &root.resources {
@@ -160,10 +160,10 @@ impl Scene {
         }
 
         // collect image href
-        if let NodeKind::Image(ref meta) = child.kind {
-            if let Some(href) = meta.source.as_href() {
-                self.image_refs.insert(href.to_string());
-            }
+        if let NodeKind::Image(ref meta) = child.kind
+            && let Some(href) = meta.source.as_href()
+        {
+            self.image_refs.insert(href.to_string());
         }
 
         {

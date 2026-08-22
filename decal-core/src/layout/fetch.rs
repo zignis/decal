@@ -23,7 +23,7 @@ use web_sys::{
 
 /// Reqwest client
 #[cfg(all(not(target_arch = "wasm32"), feature = "fetch-async"))]
-static CLIENT: LazyLock<Client> = LazyLock::new(|| Client::new());
+static CLIENT: LazyLock<Client> = LazyLock::new(Client::new);
 
 /// Fetches an image from a URL asynchronously (for WASM).
 #[cfg(target_arch = "wasm32")]
