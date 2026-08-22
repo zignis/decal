@@ -1,5 +1,6 @@
 mod context;
 mod engine;
+mod fetch;
 mod font;
 mod image;
 mod node;
@@ -21,4 +22,5 @@ pub use stencil::*;
 pub use text::*;
 
 pub(crate) use context::*;
+pub(crate) use fetch::*;
 pub(crate) use typography::*;

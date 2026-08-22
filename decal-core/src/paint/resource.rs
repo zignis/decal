@@ -2,6 +2,7 @@ use crate::{
     filters::Filter,
     primitives::{
         ClipPath,
+        ImagePaint,
         LinearGradient,
         Mask,
         Paint,
@@ -34,6 +35,28 @@ pub(crate) enum Resource {
     Mask(Mask),
     #[display("{0}")]
     Path(Path),
+}
+
+impl Resource {
+    /// Returns the URL of all external image objects present in this resource.
+    ///
+    /// # Returns
+    /// - A vector of external image URLs
+    pub(crate) fn image_refs(&self) -> Vec<String> {
+        let mut image_refs = Vec::new();
+
+        match self {
+            Resource::Filter(filter) => image_refs.extend(filter.image_refs()),
+            Resource::ImagePaint(paint) => {
+                if let Some(href) = paint.as_href() {
+                    image_refs.push(href.to_string());
+                }
+            }
+            _ => {}
+        }
+
+        image_refs
+    }
 }
 
 /// Conversion trait for extracting render resources from higher-level values.

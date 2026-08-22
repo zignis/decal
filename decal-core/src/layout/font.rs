@@ -10,15 +10,25 @@ use hashbrown::HashMap;
 use smart_default::SmartDefault;
 use std::sync::Arc;
 
-pub(crate) const DEFAULT_FONT_FAMILY: &'static str = "sans-serif";
+pub(crate) const DEFAULT_FONT_FAMILY: &str = "sans-serif";
 pub(crate) const BASE_FONT_SIZE: f32 = 16.0;
 pub(crate) const BASE_LINE_HEIGHT: f32 = 22.0;
+
+#[cfg(not(target_arch = "wasm32"))]
+fn default_font_system() -> FontSystem {
+    FontSystem::new()
+}
+
+#[cfg(target_arch = "wasm32")]
+fn default_font_system() -> FontSystem {
+    FontSystem::new_with_fonts(std::iter::empty())
+}
 
 /// The central font registry managing font loading, aliases, and resolution.
 #[derive(Debug, SmartDefault)]
 pub struct FontRegistry {
     /// The underlying [`FontSystem`] used for shaping and font lookup.
-    #[default(FontSystem::new())]
+    #[default(default_font_system())]
     pub(crate) system: FontSystem,
     /// The mapping from user-defined aliases to loaded font IDs.
     pub(crate) aliases: HashMap<String, Vec<ID>>,
@@ -66,6 +76,7 @@ impl FontRegistry {
     /// - [`Self`]
     ///
     /// [`load_system_fonts`]: cosmic_text::fontdb::Database::load_system_fonts
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn load_system_fonts(mut self) -> Self {
         self.system.db_mut().load_system_fonts();
         self

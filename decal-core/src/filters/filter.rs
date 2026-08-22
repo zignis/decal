@@ -139,6 +139,19 @@ impl Filter {
 
         self
     }
+
+    /// Returns the URL of all image filter primitives
+    pub(crate) fn image_refs(&self) -> Vec<String> {
+        let mut image_refs = Vec::new();
+
+        for primitive in &self.primitives {
+            if let FilterPrimitive::Image(image) = primitive {
+                image_refs.push(image.href().to_string());
+            }
+        }
+
+        image_refs
+    }
 }
 
 impl HasFilterRegion for Filter {
