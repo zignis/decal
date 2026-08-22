@@ -54,7 +54,7 @@ struct ContextInner {
 #[derive(Debug, Default)]
 pub struct FilterContext(Mutex<ContextInner>);
 
-impl<'a> FilterContext {
+impl FilterContext {
     /// Creates a new [`Flood`] filter primitive.
     ///
     /// # Returns

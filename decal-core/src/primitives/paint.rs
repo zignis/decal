@@ -490,7 +490,7 @@ impl PaintStack {
     /// - `visit_layer`: The visitor invoked for each rendered paint layer.
     /// - `visit_group`: The visitor invoked for the enclosing group when
     ///   multiple layers are present.
-    pub(crate) fn render<'a, W, D, S, L, G>(
+    pub(crate) fn render<W, D, S, L, G>(
         &self,
         ctx: &mut RenderContext<W>,
         draw_single_layer: D,

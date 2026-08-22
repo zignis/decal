@@ -69,6 +69,7 @@ where
 /// - `clip_y`: Whether clipping is applied along the vertical axis.
 /// - `scene_size`: The size of the root scene used when clipping extends beyond
 ///   the element.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn write_clip_path<T>(
     out: &mut T,
     w: f32,

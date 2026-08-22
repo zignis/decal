@@ -54,6 +54,9 @@ pub type ImageHrefDataResolver<'a> =
 pub type ImageHrefStringResolver<'a> =
     Arc<dyn Fn(&str, &usvg::Options) -> Option<ImageKind> + Send + Sync + 'a>;
 
+/// Function for filtering out the images to cache.
+pub type CacheIgnoreFn = Arc<dyn Fn(&str) -> bool + Send + Sync>;
+
 /// Configuration options controlling image loading and caching behavior.
 #[derive(Clone, Default)]
 pub struct ImageOptions<'a> {
@@ -63,7 +66,7 @@ pub struct ImageOptions<'a> {
     pub cache_ignore_list: Vec<String>,
     /// A predicate used to determine whether a given `href` should bypass the
     /// cache.
-    pub cache_ignore_fn: Option<Arc<dyn Fn(&str) -> bool + Send + Sync>>,
+    pub cache_ignore_fn: Option<CacheIgnoreFn>,
     /// Optional resolver for data-based image references.
     pub href_data_resolver: Option<ImageHrefDataResolver<'a>>,
     /// Optional resolver for string-based image references.
