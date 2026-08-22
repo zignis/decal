@@ -153,9 +153,10 @@ impl Scene {
             }
         }
 
+        let child_id = self.nodes.len();
         self.nodes.push(child);
-        let child_id = self.nodes.len() - 1;
         self.nodes[parent_id].children.push(child_id);
+
         child_id.into()
     }
 
