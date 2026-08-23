@@ -105,7 +105,10 @@ impl FontRegistry {
     {
         let source = Source::Binary(Arc::new(data.into()));
         let ids = self.system.db_mut().load_font_source(source);
-        self.aliases.insert(alias.to_string(), ids.to_vec());
+        self.aliases
+            .entry(alias.to_string())
+            .or_default()
+            .extend_from_slice(&ids);
     }
 
     /// Resolves and returns the default font family name.
