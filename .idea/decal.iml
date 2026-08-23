@@ -4,6 +4,8 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/decal-core/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/decal-core/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/decal-core/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/decal-macros/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/decal-macros/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/examples" isTestSource="false" />
