@@ -10,6 +10,7 @@ keywords = ["svg", "graphics", "rendering", "image", "vector"]
 categories = ["graphics", "rendering", "multimedia::images", "wasm"]
 exclude = ["/examples"]
 readme = "../README.md"
+autobenches = false
 
 [features]
 default = ["helpers", "fetch"]
@@ -58,3 +59,10 @@ wasm-bindgen-futures = "0.4"
 
 [dev-dependencies]
 xmltree = "0.12.0"
+criterion = { version = "0.8.2", features = ["html_reports"] }
+
+[[bench]]
+name = "decal_bench"
+path = "benches/main.rs"
+harness = false
+required-features = ["fetch-async"]
