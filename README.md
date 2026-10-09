@@ -47,3 +47,7 @@ Explore [examples](https://github.com/zignis/decal/tree/main/examples).
 
 [MIT](https://github.com/zignis/decal/blob/main/LICENSE-MIT)
 or [Apache-2.0](https://github.com/zignis/decal/blob/main/LICENSE-APACHE)
+
+## AI Usage Policy
+
+See [AI Usage Disclosure](AI_POLICY.md) for details on the limited use of LLMs in `decal`.
